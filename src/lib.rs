@@ -17,11 +17,11 @@ impl Line {
     pub fn new(line: String) -> Line {
         lazy_static! {
             static ref SPLITTER: Regex =
-                Regex::new(r"^\[([^\]]+)\](?: \[[^\]]+\])? \[([a-z0-9]+…|[a-f0-9-]+)\]").unwrap();
+                Regex::new(r"^\[([^\]]+)\](?: \[[^\]]+\])? \[(?P<id>[a-z0-9]+…|[a-f0-9-]+)\]").unwrap();
         }
 
         if let Some(captures) = SPLITTER.captures(&line) {
-            let id = Some(captures.get(2).unwrap().as_str().to_string());
+            let id = Some(captures.name("id").unwrap().as_str().to_string());
             Line { line, id }
         }
         else {
