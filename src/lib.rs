@@ -5,33 +5,42 @@ pub mod printer;
 pub use crate::error::Error;
 pub type Result<T> = std::result::Result<T, Error>;
 
-use regex::Regex;
+use regex::{ Regex, Captures };
 use lazy_static::lazy_static;
 
-pub struct Line {
-    line: String,
-    id: Option<String>
+#[derive(Debug)]
+pub struct Line<'a> {
+    line: &'a String,
+    captures: Option<regex::Captures<'a>>
 }
 
-impl Line {
-    pub fn new(line: String) -> Line {
+impl<'a> Line<'a> {
+    pub fn new(line: &'a String) -> Line<'a> {
         lazy_static! {
             static ref SPLITTER: Regex =
-                Regex::new(r"^\[([^\]]+)\](?: \[[^\]]+\])? \[(?P<id>[a-z0-9]+…|[a-f0-9-]+)\]").unwrap();
+                Regex::new(r"^\[(?P<context>[^\]]+)\](?: \[[^\]]+\])? \[(?P<id>[a-z0-9]+…|[a-f0-9-]+)\]").unwrap();
         }
 
-        if let Some(captures) = SPLITTER.captures(&line) {
-            let id = Some(captures.name("id").unwrap().as_str().to_string());
-            Line { line, id }
+        Line { line, captures: SPLITTER.captures(line) }
+    }
+
+    pub fn id(&self) -> &'a str {
+        match &self.captures {
+            Some(c) => c.name("id").unwrap().as_str(),
+            None => ""
         }
-        else {
-            Line { line, id: None }
+    }
+
+    pub fn context(&self) -> &'a str {
+        match &self.captures {
+            Some(c) => c.name("context").unwrap().as_str(),
+            None => ""
         }
     }
 }
 
-impl std::fmt::Display for Line {
+impl<'a> std::fmt::Display for Line<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{:?} {}", self.id, self.line)
+        write!(f, "{} {}", self.context(), self.line)
     }
 }

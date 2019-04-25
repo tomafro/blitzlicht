@@ -8,7 +8,7 @@ fn main() -> Result<()> {
     let printer = BasicPrinter::new();
 
     for line in reader {
-        let l = Line::new(line);
+        let l = Line::new(&line);
         printer.line(&l);
     }
 
