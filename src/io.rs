@@ -21,9 +21,9 @@ impl Reader {
 static PAUSE: Duration = Duration::from_millis(100);
 
 impl Iterator for Reader {
-    type Item = String;
+    type Item = Line;
 
-    fn next(&mut self) -> Option<String> {
+    fn next(&mut self) -> Option<Self::Item> {
         let mut line = String::new();
 
         loop {
@@ -34,7 +34,7 @@ impl Iterator for Reader {
                         false => return None
                     }
                 },
-                Ok(_) => return Some(line),
+                Ok(_) => return Some(Line { line }),
                 Err(_) => return None
             }
         }
