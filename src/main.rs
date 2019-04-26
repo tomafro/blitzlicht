@@ -8,8 +8,10 @@ fn main() -> Result<()> {
     let printer = BasicPrinter::new();
 
     for line in reader {
-        let l = Line::new(&line);
-        printer.line(&l);
+        match Line::parse(&line) {
+            Some(l) => printer.line(&l),
+            None    => printer.unrecognised(&line)
+        }
     }
 
     Ok(())
