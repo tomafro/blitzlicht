@@ -5,36 +5,60 @@ use blitzlicht::printer::{ Printer, BasicPrinter };
 
 use std::collections::HashSet;
 
-fn main() -> Result<()> {
-    let path = "/Users/tom/Work/basecamp/haystack/log/development.log";
-    let reader = Reader::file(path, false)?;
-    let matcher = Matcher::new();
-    let printer = BasicPrinter::new();
-    let mut matches = HashSet::new();
+struct Runner {
+    reader: Reader,
+    matcher: Matcher,
+    printer: BasicPrinter,
+    matches: HashSet<String>
+}
 
-    for line in reader {
-        if matcher.matches(&line) {
-            match Line::parse(&line) {
-                Some(l) => {
-                    matches.insert(l.id.to_owned());
-                    printer.matched(&l);
-                },
-                None    => printer.unrecognised(&line)
+fn matched_line(matches: &mut HashSet<String>, printer: &Printer, unparsed: &String) {
+    match Line::parse(unparsed) {
+        Some(line) => {
+            matches.insert(line.id.to_owned());
+            printer.matched(&line);
+        },
+        None    => printer.unrecognised(unparsed)
+    }
+}
+
+fn unmatched_line(matches: &HashSet<String>, printer: &Printer, unparsed: &String) {
+    match Line::parse(&unparsed) {
+        Some(line) => {
+            if matches.contains(line.id) {
+                printer.matched_id(&line);
             }
-        } else {
-            match Line::parse(&line) {
-                Some(l) => {
-                    if matches.contains(l.id) {
-                        printer.matched_id(&l);
-                    }
-                    else {
-                        printer.unmatched(&l);
-                    }
-                }
-                None    => printer.unrecognised(&line)
+            else {
+                printer.unmatched(&line);
             }
         }
+        None    => printer.unrecognised(&unparsed)
     }
+}
 
-    Ok(())
+impl Runner {
+    pub fn run(mut self) -> Result<()> {
+        for line in self.reader {
+            if self.matcher.matches(&line) {
+                matched_line(&mut self.matches, &self.printer, &line);
+            } else {
+                unmatched_line(&self.matches, &self.printer, &line);
+            }
+        }
+
+        Ok(())
+    }
+}
+
+fn main() -> Result<()> {
+    let path = "/Users/tom/Work/basecamp/haystack/log/development.log";
+
+    let runner = Runner {
+        reader:  Reader::file(path, false)?,
+        matcher: Matcher::new(),
+        printer: BasicPrinter::new(),
+        matches: HashSet::new()
+    };
+
+    runner.run()
 }
