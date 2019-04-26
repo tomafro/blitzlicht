@@ -2,7 +2,9 @@ use crate::*;
 
 pub trait Printer {
     fn unrecognised(&self, line: &String);
-    fn line(&self, line: &Line);
+    fn unmatched(&self, line: &Line);
+    fn matched(&self, line: &Line);
+    fn matched_id(&self, line: &Line);
 }
 
 pub struct BasicPrinter {
@@ -16,10 +18,18 @@ impl BasicPrinter {
 
 impl Printer for BasicPrinter {
     fn unrecognised(&self, line: &String) {
-        print!("{}", line);
+        //print!("{}", line);
     }
 
-    fn line(&self, line: &Line) {
-        print!("[{}:{:.5}] {}\n", line.context, line.id, line.rest);
+    fn unmatched(&self, line: &Line) {
+        //print!("[{}:{:.5}] {}\n", line.context, line.id, line.rest);
+    }
+
+    fn matched(&self, line: &Line) {
+        print!("MATCH! [{}:{:.5}] {}\n", line.context, line.id, line.rest);
+    }
+
+    fn matched_id(&self, line: &Line) {
+        print!("ID! [{}:{:.5}] {}\n", line.context, line.id, line.rest);
     }
 }

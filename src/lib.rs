@@ -11,10 +11,10 @@ use lazy_static::lazy_static;
 
 #[derive(Debug)]
 pub struct Line<'a> {
-    line: &'a String,
-    id: &'a str,
-    context: &'a str,
-    rest: &'a str
+    pub line: &'a String,
+    pub id: &'a str,
+    pub context: &'a str,
+    pub rest: &'a str
 }
 
 impl<'a> Line<'a> {
