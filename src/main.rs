@@ -12,7 +12,7 @@ struct Runner {
     matches: HashSet<String>
 }
 
-fn matched_line(matches: &mut HashSet<String>, printer: &Printer, unparsed: &String) {
+fn matched_line(matches: &mut HashSet<String>, printer: &mut Printer, unparsed: &String) {
     match Line::parse(unparsed) {
         Some(line) => {
             matches.insert(line.id.to_owned());
@@ -22,14 +22,12 @@ fn matched_line(matches: &mut HashSet<String>, printer: &Printer, unparsed: &Str
     }
 }
 
-fn unmatched_line(matches: &HashSet<String>, printer: &Printer, unparsed: &String) {
+fn unmatched_line(matches: &HashSet<String>, printer: &mut Printer, unparsed: &String) {
     match Line::parse(&unparsed) {
         Some(line) => {
-            if matches.contains(line.id) {
-                printer.matched_id(&line);
-            }
-            else {
-                printer.unmatched(&line);
+            match matches.contains(line.id) {
+                true  => printer.matched_id(&line),
+                false => printer.unmatched(&line)
             }
         }
         None    => printer.unrecognised(&unparsed)
@@ -39,10 +37,9 @@ fn unmatched_line(matches: &HashSet<String>, printer: &Printer, unparsed: &Strin
 impl Runner {
     pub fn run(mut self) -> Result<()> {
         for line in self.reader {
-            if self.matcher.matches(&line) {
-                matched_line(&mut self.matches, &self.printer, &line);
-            } else {
-                unmatched_line(&self.matches, &self.printer, &line);
+            match self.matcher.matches(&line) {
+                true  => matched_line(&mut self.matches, &mut self.printer, &line),
+                false => unmatched_line(&self.matches, &mut self.printer, &line)
             }
         }
 

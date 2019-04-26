@@ -6,7 +6,7 @@ pub struct Matcher {
 
 impl Matcher {
     pub fn new() -> Self {
-        Matcher { regex: Regex::new(r"MessagesController").unwrap() }
+        Matcher { regex: Regex::new(r"Controller").unwrap() }
     }
 
     pub fn matches(&self, line: &str) -> bool {
