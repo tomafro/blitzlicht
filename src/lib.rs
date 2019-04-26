@@ -1,6 +1,7 @@
 pub mod error;
 pub mod io;
 pub mod printer;
+pub mod matcher;
 
 pub use crate::error::Error;
 pub type Result<T> = std::result::Result<T, Error>;
