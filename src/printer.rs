@@ -35,10 +35,10 @@ impl Printer for BasicPrinter {
     }
 
     fn matched(&mut self, line: &Line) {
-        print!("{}[{}:{}] {}\n", self.colour_for(&line.id).paint("█"), line.context, self.colour_for(&line.id).paint(line.id), line.rest);
+        print!("{}{}:{} {}\n", self.colour_for(&line.id).paint("░"), line.context, self.colour_for(&line.id).paint(line.id), line.rest);
     }
 
     fn matched_id(&mut self, line: &Line) {
-        print!("{}[{}:{}] {}\n", self.colour_for(&line.id).paint("█"), line.context, self.colour_for(&line.id).paint(line.id), line.rest);
+        print!("{}{}:{} {}\n", self.colour_for(&line.id).paint("░"), line.context, self.colour_for(&line.id).paint(line.id), line.rest);
     }
 }
