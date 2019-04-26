@@ -1,5 +1,8 @@
 use crate::*;
 
+use ansi_term::Style;
+use ansi_term::Colour::{Red, Black, Yellow, RGB};
+
 pub trait Printer {
     fn unrecognised(&self, line: &String);
     fn unmatched(&self, line: &Line);
@@ -26,10 +29,10 @@ impl Printer for BasicPrinter {
     }
 
     fn matched(&self, line: &Line) {
-        print!("MATCH! [{}:{:.5}] {}\n", line.context, line.id, line.rest);
+        print!("[{}:{}] {}\n", RGB(0, 0, 0).on(RGB(220, 220, 0)).paint(line.context), Red.paint(line.id), line.rest);
     }
 
     fn matched_id(&self, line: &Line) {
-        print!("ID! [{}:{:.5}] {}\n", line.context, line.id, line.rest);
+        print!("[{}:{}] {}\n", line.context, line.id, line.rest);
     }
 }
