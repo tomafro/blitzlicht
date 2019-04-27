@@ -42,24 +42,24 @@ impl IntoIterator for Buffer {
     }
 }
 
-pub struct Runner {
+pub struct Runner<'a> {
     reader: Reader,
     matcher: Matcher,
-    printer: BasicPrinter,
+    printer: &'a mut Printer,
     matches: HashSet<String>,
     buffer: Buffer,
 }
 
-impl Runner {
-    pub fn new(reader: Reader, matcher: Matcher) -> Runner {
-        Runner { reader, matcher, printer: BasicPrinter::new(), matches: HashSet::new(), buffer: Buffer::new(1000) }
+impl<'a> Runner<'a> {
+    pub fn new(reader: Reader, matcher: Matcher, printer: &mut Printer) -> Runner {
+        Runner { reader, matcher, printer, matches: HashSet::new(), buffer: Buffer::new(1000) }
     }
 
     pub fn run(mut self) -> Result<()> {
         for line in self.reader {
             match self.matcher.matches(&line) {
-                true  => Self::matched_line(&mut self.matches, &self.buffer, &mut self.printer, &line),
-                false => Self::unmatched_line(&self.matches, &mut self.printer, &line)
+                true  => Self::matched_line(&mut self.matches, &self.buffer, self.printer, &line),
+                false => Self::unmatched_line(&self.matches, self.printer, &line)
             }
             self.buffer.append(line);
         }
