@@ -29,7 +29,7 @@ impl BasicPrinter {
 
 impl Printer for BasicPrinter {
     fn unrecognised(&mut self, line: &String) {
-        if self.print_unrecognised {} {
+        if self.print_unrecognised {
             print!("{}", line);
         }
     }
