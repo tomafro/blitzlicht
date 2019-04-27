@@ -2,7 +2,7 @@
 use crate::*;
 use crate::io::Reader;
 use crate::matcher::Matcher;
-use crate::printer::{ Printer, BasicPrinter };
+use crate::printer::{ Printer };
 
 use std::collections::{ HashSet, VecDeque };
 
@@ -28,17 +28,8 @@ impl Buffer {
         self.buffer.push_back(line);
     }
 
-    pub fn lines(&self) -> &VecDeque<String> {
-        &self.buffer
-    }
-}
-
-impl IntoIterator for Buffer {
-    type Item = String;
-    type IntoIter = std::collections::vec_deque::IntoIter<String>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.buffer.into_iter()
+    pub fn iter(&self) -> std::collections::vec_deque::Iter<String> {
+        self.buffer.iter()
     }
 }
 
@@ -71,7 +62,7 @@ impl<'a> Runner<'a> {
         match Line::parse(unparsed) {
             Some(matched) => {
                 if matches.insert(matched.id.to_owned()) {
-                    for previous in buffer.lines() {
+                    for previous in buffer.iter() {
                         match Line::parse(&previous) {
                             Some(line) => {
                                 if line.id == matched.id {
