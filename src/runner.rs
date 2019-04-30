@@ -1,8 +1,9 @@
 
 use crate::*;
+use crate::data::Line;
 use crate::io::Reader;
 use crate::matcher::Matcher;
-use crate::printer::{ Printer };
+use crate::printer::Printer;
 
 use std::collections::{ HashSet, VecDeque };
 

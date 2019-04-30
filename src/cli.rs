@@ -1,18 +1,15 @@
-// let yaml = load_yaml!("cli.yml");
-//     let matches = App::from_yaml(yaml).get_matches();
-//     print!("{:?}", matches);
-
-use clap::{App, Arg, SubCommand};
+use crate::*;
+use clap::{App, Arg};
 
 pub struct Cli {
 }
 
 impl<'a, 'b> Cli {
     pub fn app() -> App<'a, 'b> {
-        App::new("Blitznicht")
-            .version("0.1")
-            .author("Tom Ward <tom@popdog.net>")
-            .about("Shine a light on rails tagged logs")
+        App::new(NAME)
+            .version(VERSION)
+            .author(AUTHORS)
+            .about(DESCRIPTION)
                 .display_order(0)
                 .arg(Arg::with_name("short")
                     .long("short")
