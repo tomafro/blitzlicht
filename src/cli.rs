@@ -2,6 +2,8 @@ use crate::*;
 use clap::{App, Arg};
 
 pub struct Cli {
+    pub file: String,
+    pub tail: bool
 }
 
 impl<'a, 'b> Cli {
@@ -37,7 +39,9 @@ impl<'a, 'b> Cli {
 
     pub fn from_cli() -> Cli {
         let app = Cli::app();
-        println!("{:?}", app.get_matches());
-        Cli {}
+        let matches = app.get_matches();
+        let file = matches.value_of("file").unwrap().to_owned();
+        let tail = matches.is_present("tail");
+        Cli { file, tail }
     }
 }
