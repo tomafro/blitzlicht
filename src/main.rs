@@ -18,8 +18,8 @@ fn main() -> Result<()> {
         &mut printer
     );
 
-    // runner.run()
-    Ok(())
+    runner.run()
+    //Ok(())
 }
 
 fn completion() -> Result<()> {
