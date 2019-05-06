@@ -1,9 +1,11 @@
 use crate::*;
 use clap::{App, Arg};
 
+#[derive(Debug)]
 pub struct Cli {
     pub file: String,
-    pub tail: bool
+    pub tail: bool,
+    pub patterns: Option<Vec<String>>,
 }
 
 impl<'a, 'b> Cli {
@@ -42,6 +44,10 @@ impl<'a, 'b> Cli {
         let matches = app.get_matches();
         let file = matches.value_of("file").unwrap().to_owned();
         let tail = matches.is_present("tail");
-        Cli { file, tail }
+        let patterns: Option<Vec<_>> = match matches.values_of("pattern") {
+            Some(values) => Some(values.map(|p| p.to_owned()).collect()),
+            None => None
+        };
+        Cli { file, tail, patterns }
     }
 }

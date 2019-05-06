@@ -10,11 +10,12 @@ use clap::Shell;
 
 fn main() -> Result<()> {
     let cli = Cli::from_cli();
+    println!("{:?}", cli);
 
     let mut printer = BasicPrinter::new();
     let runner = Runner::new(
         Reader::file(&cli.file, cli.tail)?,
-        Matcher::new(),
+        Matcher::new(cli.patterns),
         &mut printer
     );
 
