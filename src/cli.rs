@@ -3,7 +3,7 @@ use std::str::FromStr;
 use clap::{App, Arg, Shell};
 use std::str;
 
-pub fn app<'a, 'b>() -> App<'a, 'b> {
+pub fn cli<'a, 'b>() -> App<'a, 'b> {
     App::new(NAME)
         .version(VERSION)
         .author(AUTHORS)
@@ -35,20 +35,21 @@ pub fn app<'a, 'b>() -> App<'a, 'b> {
 
 pub fn completions(name: &str) -> String {
     let shell = Shell::from_str(name).unwrap();
-    let mut app = app();
+    let mut cli = cli();
     let mut output: Vec<u8> = Vec::new();
-    app.gen_completions_to(NAME, shell, &mut output);
+    cli.gen_completions_to(NAME, shell, &mut output);
     str::from_utf8(&output).unwrap().to_string()
 }
 
-pub fn from_cli() -> Config {
-    let app = app();
-    let matches = app.get_matches();
-    let file = matches.value_of("file").unwrap().to_owned();
-    let tail = matches.is_present("tail");
-    let patterns: Option<Vec<_>> = match matches.values_of("pattern") {
-        Some(values) => Some(values.map(|p| p.to_owned()).collect()),
-        None => None
-    };
-    Config { file, tail, patterns }
+impl<'a, 'b> From<App<'a, 'b>> for Config {
+    fn from(cli: App) -> Self {
+        let matches = cli.get_matches();
+        let file = matches.value_of("file").unwrap().to_owned();
+        let tail = matches.is_present("tail");
+        let patterns: Option<Vec<_>> = match matches.values_of("pattern") {
+            Some(values) => Some(values.map(|p| p.to_owned()).collect()),
+            None => None
+        };
+        Config { file, tail, patterns }
+    }
 }

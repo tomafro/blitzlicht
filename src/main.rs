@@ -3,10 +3,10 @@ use blitzlicht::io::Reader;
 use blitzlicht::matcher::Matcher;
 use blitzlicht::runner::Runner;
 use blitzlicht::printer::BasicPrinter;
-use blitzlicht::cli::from_cli;
+use blitzlicht::cli::cli;
 
 fn main() -> Result<()> {
-    let config = from_cli();
+    let config = Config::from(cli());
     println!("{:?}", config);
 
     let runner = Runner::new(
