@@ -12,6 +12,13 @@ const AUTHORS: &'static str = env!("CARGO_PKG_AUTHORS");
 // const REPOSITORY: &'static str = env!("CARGO_PKG_REPOSITORY");
 
 #[derive(Debug)]
+pub struct Config {
+    pub file: String,
+    pub tail: bool,
+    pub patterns: Option<Vec<String>>,
+}
+
+#[derive(Debug)]
 pub enum Error {
     UnableToOpenFile(String),
 }
