@@ -9,12 +9,11 @@ fn main() -> Result<()> {
     let cli = Cli::from_cli();
     println!("{:?}", cli);
 
-    let mut printer = BasicPrinter::new();
     let runner = Runner::new(
         Reader::file(&cli.file, cli.tail)?,
-        Matcher::new(cli.patterns),
-        &mut printer
+        Matcher::new(cli.patterns)
     );
 
-    runner.run()
+    let mut printer = BasicPrinter::new();
+    runner.run(&mut printer)
 }

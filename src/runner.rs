@@ -34,24 +34,23 @@ impl Buffer {
     }
 }
 
-pub struct Runner<'a> {
+pub struct Runner {
     reader: Reader,
     matcher: Matcher,
-    printer: &'a mut Printer,
     matches: HashSet<String>,
     buffer: Buffer,
 }
 
-impl<'a> Runner<'a> {
-    pub fn new(reader: Reader, matcher: Matcher, printer: &mut Printer) -> Runner {
-        Runner { reader, matcher, printer, matches: HashSet::new(), buffer: Buffer::new(1000) }
+impl Runner {
+    pub fn new(reader: Reader, matcher: Matcher) -> Runner {
+        Runner { reader, matcher, matches: HashSet::new(), buffer: Buffer::new(1000) }
     }
 
-    pub fn run(mut self) -> Result<()> {
+    pub fn run(mut self, printer: &mut Printer) -> Result<()> {
         for line in self.reader {
             match self.matcher.matches(&line) {
-                true  => Self::matched_line(&mut self.matches, &self.buffer, self.printer, &line),
-                false => Self::unmatched_line(&self.matches, self.printer, &line)
+                true  => Self::matched_line(&mut self.matches, &self.buffer, printer, &line),
+                false => Self::unmatched_line(&self.matches, printer, &line)
             }
             self.buffer.append(line);
         }

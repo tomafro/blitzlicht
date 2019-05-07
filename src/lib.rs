@@ -9,7 +9,7 @@ const NAME: &'static str = env!("CARGO_PKG_NAME");
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 const DESCRIPTION: &'static str = env!("CARGO_PKG_DESCRIPTION");
 const AUTHORS: &'static str = env!("CARGO_PKG_AUTHORS");
-const REPOSITORY: &'static str = env!("CARGO_PKG_REPOSITORY");
+// const REPOSITORY: &'static str = env!("CARGO_PKG_REPOSITORY");
 
 #[derive(Debug)]
 pub enum Error {
