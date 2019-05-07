@@ -42,8 +42,17 @@ pub struct Runner {
 }
 
 impl Runner {
-    pub fn new(reader: Reader, matcher: Matcher) -> Runner {
+    fn new(reader: Reader, matcher: Matcher) -> Runner {
         Runner { reader, matcher, matches: HashSet::new(), buffer: Buffer::new(1000) }
+    }
+
+    pub fn configure<C>(config: C) -> Result<Self>
+    where C: Into<Config> {
+        let config = config.into();
+        let reader = Reader::file(&config.file, config.tail)?;
+        let matcher = Matcher::new(config.patterns);
+        let runner = Self::new(reader, matcher);
+        Ok(runner)
     }
 
     pub fn run(mut self, printer: &mut Printer) -> Result<()> {
