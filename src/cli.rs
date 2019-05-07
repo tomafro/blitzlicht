@@ -1,5 +1,7 @@
 use crate::*;
-use clap::{App, Arg};
+use std::str::FromStr;
+use clap::{App, Arg, Shell};
+use std::str;
 
 #[derive(Debug)]
 pub struct Cli {
@@ -37,6 +39,14 @@ impl<'a, 'b> Cli {
                     .help("Patterns to match")
                     .takes_value(true)
                     .multiple(true))
+    }
+
+    pub fn completions(name: &str) -> String {
+        let shell = Shell::from_str(name).unwrap();
+        let mut app = Cli::app();
+        let mut output: Vec<u8> = Vec::new();
+        app.gen_completions_to("blitzlicht", shell, &mut output);
+        str::from_utf8(&output).unwrap().to_string()
     }
 
     pub fn from_cli() -> Cli {
