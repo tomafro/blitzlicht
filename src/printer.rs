@@ -1,4 +1,6 @@
 use crate::data::Line;
+use crate::matcher::Matcher;
+use crate::*;
 
 use std::collections::HashMap;
 
@@ -37,7 +39,8 @@ pub trait Printer {
 pub struct BasicPrinter {
     print_unmatched: bool,
     print_unrecognised: bool,
-    palette: Palette
+    palette: Palette,
+    filter: Matcher
 }
 
 const PALETTE: [ansi_term::Colour; 6] = [
@@ -50,9 +53,20 @@ const PALETTE: [ansi_term::Colour; 6] = [
 ];
 
 impl BasicPrinter {
-    pub fn new() -> BasicPrinter {
+    pub fn new(filter: Matcher) -> BasicPrinter {
         let palette = Palette { current: 0, colours: PALETTE.to_vec(), colour_roles: HashMap::new() };
-        Self { palette: palette, print_unmatched: false, print_unrecognised: false }
+        Self { palette: palette, print_unmatched: false, print_unrecognised: false, filter }
+    }
+
+    pub fn configure<C>(config: C) -> Result<Self>
+    where C: Into<Config> {
+        let config: Config = config.into();
+        let filter = match config.short {
+            false => Matcher::new(None),
+            true => Matcher::new(Some(vec![ "^(Started|Finished|Parameters|Completed|Performed|Performing)".to_string() ]))
+        };
+        let printer = Self::new(filter);
+        Ok(printer)
     }
 }
 
@@ -70,10 +84,14 @@ impl Printer for BasicPrinter {
     }
 
     fn matched(&mut self, line: &Line) {
-        print!("[{}] [{}] {}\n", line.context, self.palette.colour_for(&line.id).paint(line.id), line.rest);
+        if self.filter.matches(&line.rest) {
+            print!("[{}] [{}] {}\n", line.context, self.palette.colour_for(&line.id).paint(line.id), line.rest);
+        }
     }
 
     fn matched_id(&mut self, line: &Line) {
-        print!("[{}] [{}] {}\n", line.context, self.palette.colour_for(&line.id).paint(line.id), line.rest);
+        if self.filter.matches(&line.rest) {
+            print!("[{}] [{}] {}\n", line.context, self.palette.colour_for(&line.id).paint(line.id), line.rest);
+        }
     }
 }

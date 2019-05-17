@@ -15,6 +15,7 @@ const AUTHORS: &'static str = env!("CARGO_PKG_AUTHORS");
 pub struct Config {
     pub file: String,
     pub tail: bool,
+    pub short: bool,
     pub patterns: Option<Vec<String>>,
 }
 

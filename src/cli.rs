@@ -12,9 +12,6 @@ pub fn cli<'a, 'b>() -> App<'a, 'b> {
             .arg(Arg::with_name("short")
                 .long("short")
                 .help("Show only basic information about each request"))
-            .arg(Arg::with_name("rainbow")
-                .long("rainbow")
-                .help("Colour request context and ids"))
             .arg(Arg::with_name("tail")
                 .long("tail")
                 .short("t")
@@ -46,10 +43,11 @@ impl<'a, 'b> From<App<'a, 'b>> for Config {
         let matches = cli.get_matches();
         let file = matches.value_of("file").unwrap().to_owned();
         let tail = matches.is_present("tail");
+        let short = matches.is_present("short");
         let patterns: Option<Vec<_>> = match matches.values_of("pattern") {
             Some(values) => Some(values.map(|p| p.to_owned()).collect()),
             None => None
         };
-        Config { file, tail, patterns }
+        Config { file, tail, short, patterns }
     }
 }
