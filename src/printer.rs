@@ -14,8 +14,7 @@ struct Palette {
 
 impl Palette {
     pub fn colour_for(&mut self, id: &str) -> &ansi_term::Colour {
-        let roles = &mut self.colour_roles;
-        let colour = match roles.contains_key(id) {
+        let colour = match self.colour_roles.contains_key(id) {
             true => None,
             false => {
                 self.current = self.current + 1;
@@ -25,7 +24,7 @@ impl Palette {
                 Some(self.colours[self.current])
             }
         };
-        roles.entry(id.to_owned()).or_insert_with(|| colour.unwrap())
+        (&mut self.colour_roles).entry(id.to_owned()).or_insert_with(|| colour.unwrap())
     }
 }
 
