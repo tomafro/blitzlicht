@@ -16,15 +16,17 @@ impl Palette {
     pub fn colour_for(&mut self, id: &str) -> &ansi_term::Colour {
         let colour = match self.colour_roles.contains_key(id) {
             true => None,
-            false => {
-                self.current = self.current + 1;
-                if self.current >= self.colours.len() {
-                    self.current = 0;
-                }
-                Some(self.colours[self.current])
-            }
+            false => Some(self.next_colour())
         };
         (&mut self.colour_roles).entry(id.to_owned()).or_insert_with(|| colour.unwrap())
+    }
+
+    fn next_colour(&mut self) -> ansi_term::Colour {
+        self.current = self.current + 1;
+        if self.current >= self.colours.len() {
+            self.current = 0;
+        }
+        self.colours[self.current]
     }
 }
 
